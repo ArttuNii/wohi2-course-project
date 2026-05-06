@@ -19,6 +19,9 @@ model Quiz {
   answer       String    @db.Text
   userId       Int
   user         User @relation(fields: [userId], references: [id])
+  keywords     Keyword[]
+  attempts     Attempt[]
+  imageUrl     String?  @db.VarChar(255)
 
   @@map("quizes")
 }
@@ -29,6 +32,25 @@ model User {
   password String @db.VarChar(255)
   name     String @db.VarChar(100)
   quizes   Quiz[]
+  attempts Attempt[]
 
   @@map("users")
+}
+
+model Keyword {
+  id       Int    @id @default(autoincrement())
+  word    String @db.VarChar(100)
+  quizId  Int
+  quiz    Quiz   @relation(fields: [quizId], references: [id])
+}
+
+model Attempt {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  quizId    Int
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+
+  @@unique([userId, quizId])
+  @@map("attempts")
 }
